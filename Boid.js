@@ -18,15 +18,10 @@ class Boid {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
-      new THREE.Float32BufferAttribute([x, y, z], 3) // change the 3 to a 2 to make it 2d
+      new THREE.Float32BufferAttribute([x, y, z], 3) // Change the 3 to a 2 to make it 2d
     );
 
-    // const green = new THREE.Color("gren");
-    // const blue = new THREE.Color("blue");
-    // const factor = Math.pow(Math.random(), 10);
-    // const randomColor = blue.lerp(green, factor);
-
-    const material = new THREE.PointsMaterial({ color: 0x0000ff, size: 4 });
+    const material = new THREE.PointsMaterial({ color: 0x0000ff, size: 4 }); // Set boid color and size here
     this.point = new THREE.Points(geometry, material);
   }
 
@@ -35,9 +30,9 @@ class Boid {
   }
 
   update(flock) {
-    let v1 = this.rule1(0.5, 50, flock, this.maxSpeed, this.maxForce);
-    let v2 = this.rule2(2.0, 25, flock, this.maxSpeed, this.maxForce);
-    let v3 = this.rule3(3.0, 50, flock, this.maxSpeed, this.maxForce);
+    let v1 = this.cohesion(0.5, 50, flock, this.maxSpeed, this.maxForce);
+    let v2 = this.separation(2.0, 25, flock, this.maxSpeed, this.maxForce);
+    let v3 = this.alignment(3.0, 50, flock, this.maxSpeed, this.maxForce);
 
     this.velocity.add(v1);
     this.velocity.add(v2);
@@ -63,8 +58,6 @@ class Boid {
       this.position.z
     );
     this.point.geometry.attributes.position.needsUpdate = true;
-
-    // this.updateColor();
   }
 
   checkEdges(boxWidth, boxHeight, boxDepth) {
@@ -79,9 +72,8 @@ class Boid {
     }
   }
 
-  // COHESION
   // Rule 1: Boids try to fly towards the centre of mass of neighbouring boids.
-  rule1(coef, range, flock, maxSpeed, maxForce) {
+  cohesion(coef, range, flock, maxSpeed, maxForce) {
     let pcJ = new THREE.Vector3(0, 0, 0);
     let count = 0;
 
@@ -105,9 +97,8 @@ class Boid {
     return new THREE.Vector3(0, 0, 0);
   }
 
-  // SEPARATION
   // Rule 2: Boids try to keep a small distance away from other objects (including other boids).
-  rule2(coef, range, flock, maxSpeed, maxForce) {
+  separation(coef, range, flock, maxSpeed, maxForce) {
     let steer = new THREE.Vector3(0, 0, 0);
     let count = 0;
 
@@ -133,9 +124,8 @@ class Boid {
     return steer.multiplyScalar(coef);
   }
 
-  // ALIGNMENT
   // Rule 3: Boids try to match velocity with near boids.
-  rule3(coef, range, flock, maxSpeed, maxForce) {
+  alignment(coef, range, flock, maxSpeed, maxForce) {
     let sum = new THREE.Vector3(0, 0, 0);
     let count = 0;
 
@@ -194,18 +184,6 @@ class Boid {
     if (this.position.y > boxHeight / 2) this.position.y = -boxHeight / 2;
     if (this.position.z > boxDepth / 2) this.position.z = -boxDepth / 2;
   }
-
-  // doesn't really work as expected, still working on it
-  // updateColor() {
-  //   const speed = this.velocity.length();
-  //   const maxSpeed = this.maxSpeed;
-  //   const speedPercent = Math.min(speed / maxSpeed, 1);
-  //   const color = new THREE.Color(0x0000ff).lerp(
-  //     new THREE.Color(0x00ff00),
-  //     speedPercent
-  //   );
-  //   this.point.material.color = color;
-  // }
 
   setBoxSize(newWidth, newHeight, newDepth) {
     this.boxWidth = newWidth;

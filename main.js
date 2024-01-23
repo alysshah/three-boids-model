@@ -1,7 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-// import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import Boid from "./Boid.js";
 
 let camera, scene, renderer, controls;
@@ -38,11 +37,9 @@ function init() {
 
   // Add orbit controls
   controls = new OrbitControls(camera, renderer.domElement);
-
   // Limit zoom
   controls.minDistance = camera.position.z - 150; // Minimum zoom distance
   controls.maxDistance = camera.position.z + 50; // Maximum zoom distance
-
   // Limit rotation
   controls.minPolarAngle = (6 * Math.PI) / 14; // Minimum vertical rotation
   controls.maxPolarAngle = (8 * Math.PI) / 14; // Maximum vertical rotation
